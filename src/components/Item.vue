@@ -61,9 +61,9 @@
   
   <script>
   import ItemDataService from "../services/ItemDataService";
-  
-  export default {
+  /*export default {
     name: "itemApp",
+    
     data() {
       return {
         currentItem: null,
@@ -128,7 +128,90 @@
       this.message = '';
       this.getItem(this.$route.params.id);
     }
-  };
+  };*/
+
+
+  import { ref } from "@vue/composition-api";
+
+  export default {
+    name: "itemApp",
+
+    setup() {
+      const currentItem = ref(null);
+      const message = ref('');
+
+
+      function getItem(id) {
+        ItemDataService.get(id)
+          .then(response => {
+            currentItem.value = response.data;
+            console.log(response.data);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        }
+
+      function updatePublished(status) {
+        var data = {
+          id: currentItem.value.id,
+          name: currentItem.value.name,
+          quantity: currentItem.value.quantity,
+          price: currentItem.value.price,
+          published: status
+        };
+   ItemDataService.update(currentItem.value.id, data)
+    .then(response => {
+      console.log(response.data);
+      currentItem.value.published = status;
+      message.value = 'The status was updated successfully!';
+    })
+    .catch(e => {
+      console.log(e);
+    });
+  }
+
+      function updateItem() {
+        ItemDataService.update(currentItem.value.id, currentItem.value)
+          .then(response => {
+            console.log(response.data);
+            message.value = 'The item was updated successfully!';
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+
+    function deleteItem () {
+        ItemDataService.delete(currentItem.value.id)
+          .then(response => {
+            console.log(response.data);
+            this.$router.push({ name: "items" });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+
+      function mounted() {
+      message.value = '';
+      getItem(this.$route.params.id);
+    }
+
+    return{
+      currentItem,
+      message,
+      getItem,
+      updateItem,
+      deleteItem,
+      mounted,
+      updatePublished
+    }
+    
+  }
+}
+
+
   </script>
   
   <style>

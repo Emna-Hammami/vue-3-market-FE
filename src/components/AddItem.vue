@@ -37,7 +37,7 @@
             />
           </div>
   
-        <button @click="saveTutorial" class="btn btn-success">Submit</button>
+        <button @click="saveItem" class="btn btn-success">Submit</button>
       </div>
   
       <div v-else>
@@ -49,8 +49,57 @@
   
   <script>
   import ItemDataService from "../services/ItemDataService";
-  
+
+  import { ref } from 'vue';
+
   export default {
+    name: "add-item",
+
+    setup() {
+      const item = ref({
+        id: null,
+        title: '',
+        price: 0,
+        quantity: 0,
+        published: false
+      });
+
+      const submitted= ref (false);
+
+      function saveItem() {
+        var data = {
+          name: item.value.name,
+          price: item.value.price,
+          quantity: item.value.quantity
+        }
+        ItemDataService.create(data)
+          .then(response => {
+            item.value.id = response.data.id;
+            console.log(response.data);
+            submitted.value = true;
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+
+      function newItem() {
+        submitted.value = false;
+        item.value = {};
+      }
+
+      return {
+        item,
+        submitted,
+        saveItem,
+        newItem
+      }
+
+  }
+}
+
+  
+  /*export default {
     name: "add-item",
     data() {
       return {
@@ -85,10 +134,10 @@
       
       newItem() {
         this.submitted = false;
-        this.tutorial = {};
+        this.item = {};
       }
     }
-  };
+  };*/
   </script>
   
   <style>
