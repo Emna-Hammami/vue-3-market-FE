@@ -10,7 +10,7 @@ const routes =  [
   {
     path: "/items/:id",
     name: "item-details",
-    component: () => import("./components/Item")
+    component: () => import("./components/ItemComponent")
   },
   {
     path: "/add",

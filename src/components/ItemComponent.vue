@@ -59,8 +59,76 @@
     </div>
   </template>
   
-  <script>
+  <script setup>
   import ItemDataService from "../services/ItemDataService";
+
+  import { onMounted, ref } from 'vue';
+
+  
+
+      const currentItem = ref(null);
+      const message = ref('');
+
+
+      const getItem=(id) =>{
+        ItemDataService.get(id)
+          .then(response => {
+            currentItem.value = response.data;
+            console.log(response.data);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        }
+
+      function updatePublished(status) {
+        var data = {
+          id: currentItem.value.id,
+          name: currentItem.value.name,
+          quantity: currentItem.value.quantity,
+          price: currentItem.value.price,
+          published: status
+        };
+   ItemDataService.update(currentItem.value.id, data)
+    .then(response => {
+      console.log(response.data);
+      currentItem.value.published = status;
+      message.value = 'The status was updated successfully!';
+    })
+    .catch(e => {
+      console.log(e);
+    });
+  }
+
+      function updateItem() {
+        ItemDataService.update(currentItem.value.id, currentItem.value)
+          .then(response => {
+            console.log(response.data);
+            message.value = 'The item was updated successfully!';
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+
+    function deleteItem () {
+        ItemDataService.delete(currentItem.value.id)
+          .then(response => {
+            console.log(response.data);
+            this.$router.push({ name: "items" });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+
+      onMounted(() =>{
+      message.value = '';
+      getItem(this.$route.params.id);
+    })
+
+  
+  
   /*export default {
     name: "itemApp",
     
@@ -131,9 +199,9 @@
   };*/
 
 
-  import { ref } from "@vue/composition-api";
+  
 
-  export default {
+ /* export default {
     name: "itemApp",
 
     setup() {
@@ -209,7 +277,7 @@
     }
     
   }
-}
+}*/
 
 
   </script>
