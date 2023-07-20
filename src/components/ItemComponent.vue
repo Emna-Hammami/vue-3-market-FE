@@ -48,7 +48,7 @@
       <button type="submit" class="badge badge-success"
         @click="updateItem"
       >
-        Update
+        {{ props.text }}
       </button>
       <p>{{ message }}</p>
     </div>
@@ -64,10 +64,17 @@
 
   import { onMounted, ref } from 'vue';
 
-  
+  import { defineProps } from "vue";
 
       const currentItem = ref(null);
       const message = ref('');
+
+      const props = defineProps({
+        text:{
+          type : String,
+          default: 'Update'
+        }
+      })
 
 
       const getItem=(id) =>{
